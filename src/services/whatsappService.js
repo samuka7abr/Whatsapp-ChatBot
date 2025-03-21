@@ -1,10 +1,13 @@
 const axios = require('axios');
 const config = require('../config');
+const logger = require('../utils/logger');
 
 /**
- * @param {string} recipient 
- * @param {string} text 
- * @returns {Promise<Object>} 
+ * Envia uma mensagem utilizando a API do WhatsApp.
+ *
+ * @param {string} recipient - Identificador do destinatário (ex: número de telefone)
+ * @param {string} text - Texto da mensagem a ser enviada
+ * @returns {Promise<Object>} - Dados de resposta da API
  */
 exports.sendMessage = async (recipient, text) => {
   try {
@@ -13,10 +16,10 @@ exports.sendMessage = async (recipient, text) => {
       message: text,
       apiKey: config.whatsappApiKey
     });
-    console.log("Message sent successfully:", response.data);
+    logger.log("Message sent successfully: " + JSON.stringify(response.data));
     return response.data;
   } catch (error) {
-    console.error("Error sending message:", error.message);
+    logger.log("Error sending message: " + error.message);
     throw error;
   }
 };

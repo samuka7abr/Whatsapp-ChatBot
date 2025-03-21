@@ -1,7 +1,9 @@
+const logger = require('../utils/logger');
+
 class MessageController {
   constructor() {
     this.sessions = {};
-    this.SESSION_TIMEOUT = 10 * 60 * 1000;
+    this.SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutos
   }
 
   resetSessionTimeout(userId) {
@@ -9,7 +11,7 @@ class MessageController {
       clearTimeout(this.sessions[userId].timeoutHandle);
     }
     this.sessions[userId].timeoutHandle = setTimeout(() => {
-      console.log(`Session for ${userId} expired due to inactivity.`);
+      logger.log(`Session for ${userId} expired due to inactivity.`);
       delete this.sessions[userId];
     }, this.SESSION_TIMEOUT);
   }
@@ -19,7 +21,7 @@ class MessageController {
     const userId = messageData.from;
     const userMessage = messageData.message ? messageData.message.trim().toLowerCase() : '';
 
-    console.log(`Received message from ${userId}: ${userMessage}`);
+    logger.log(`Received message from ${userId}: ${userMessage}`);
 
     if (userMessage === 'exit') {
       if (this.sessions[userId]) {
@@ -71,9 +73,11 @@ Type the number or option name.`;
 4. Hire Service 2`;
     }
 
-    res.status(200).send({ reply });
+    return res.status(200).send({ reply });
   }
 }
 
 const messageControllerInstance = new MessageController();
-exports.handleIncomingMessage = messageControllerInstance.handleIncomingMessage.bind(messageControllerInstance);
+module.exports = {
+  handleIncomingMessage: messageControllerInstance.handleIncomingMessage.bind(messageControllerInstance)
+};
